@@ -56,25 +56,25 @@ local function T (n, count, top)
 				table.insert(witnesses, v)
 			end
 
-			print 'hello'
-			local _, w = next(qlink)
-
-			::t::
-				top[w] = 1
-				w = qlink[w]
-			if top[w] == 0 then goto t end
-
-			local cycle = {}
-			::s::
-				table.insert(cycle, w)
-				top[w] = 0
-				w = qlink[w]
-			if top[w] == 1 then goto s end
-
-			table.insert(cycle, w)
-			
-			return false, cycle
 		end
+
+		local _, w = next(witnesses)
+
+		::t::
+			top[w] = 1
+			w = qlink[w]
+		if top[w] == 0 then goto t end
+
+		local cycle = {}
+		::s::
+			table.insert(cycle, w)
+			top[w] = 0
+			w = qlink[w]
+		if top[w] == 1 then goto s end
+
+		table.insert(cycle, w)
+		
+		return false, cycle
 
 	else assert (n == 0) end
 
