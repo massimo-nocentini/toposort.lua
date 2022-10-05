@@ -42,8 +42,7 @@ local function T (n, count, top)
 	if n > 0 then	-- a loop is detected
 
 		qlink = {}
-		witnesses = {}
-		for k, _ in pairs(count) do qlink[k] = first end
+		--for k, _ in pairs(count) do qlink[k] = first end
 
 		for k, _ in pairs(count) do 
 
@@ -53,24 +52,22 @@ local function T (n, count, top)
 			while p and not p:isempty() do 
 				local v = p:pop()
 				qlink[v] = k
-				table.insert(witnesses, v)
 			end
-
 		end
 
-		local _, w = next(witnesses)
+		local w, _ = next(qlink)
 
-		::t::
+		repeat
 			top[w] = 1
 			w = qlink[w]
-		if top[w] == 0 then goto t end
+		until top[w] ~= 0
 
 		local cycle = {}
-		::s::
+		repeat
 			table.insert(cycle, w)
 			top[w] = 0
 			w = qlink[w]
-		if top[w] == 1 then goto s end
+		until top[w] ~= 1
 
 		table.insert(cycle, w)
 		
