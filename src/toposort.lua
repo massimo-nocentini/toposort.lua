@@ -30,6 +30,7 @@ local function T (n, count, top)
 		
 		n = n - 1
 		local p = top[f]
+		top[f] = nil	-- free such `f`'s stack.
 		while not p:isempty() do 
 			local v = p:pop()	
 			count[v] = count[v] - 1
@@ -38,9 +39,53 @@ local function T (n, count, top)
 		f = qlink[f] 
 	end
 
-	assert (n == 0)
+	if n > 0 then	-- a loop is detected
 
-	return order
+		qlink = {}
+		witnesses = {}
+		for k, _ in pairs(count) do qlink[k] = first end
+
+		for k, _ in pairs(count) do 
+
+			local p = top[k]
+			top[k] = 0
+
+			while p and not p:isempty() do 
+				local v = p:pop()
+				qlink[v] = k
+				table.insert(witnesses, v)
+			end
+
+			print 'hello'
+			local _, w = next(qlink)
+
+			::t::
+				top[w] = 1
+				w = qlink[w]
+			if top[w] == 0 then goto t end
+
+			local cycle = {}
+			::s::
+				table.insert(cycle, w)
+				top[w] = 0
+				w = qlink[w]
+			if top[w] == 1 then goto s end
+
+			table.insert(cycle, w)
+			
+			return false, cycle
+		end
+
+	else assert (n == 0) end
+
+	local o = {}
+	f = qlink[first]
+	while f do
+		table.insert(o, f)
+		f = qlink[f]
+	end
+
+	return order, o
 
 end
 
