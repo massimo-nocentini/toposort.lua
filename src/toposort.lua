@@ -14,12 +14,12 @@ local function T (n, count, top)
 
 	local r = first		-- this is a *very* important variable.
 
-	for k, c in pairs(count) do
-		if c == zero then 
-			qlink[r] = k
-			r = k
-		end
+	local function append_root (k) 
+		qlink[r] = k
+		r = k
 	end
+
+	for k, c in pairs(count) do if c == zero then append_root(k) end end
 
 	local order = {}
 
@@ -33,10 +33,7 @@ local function T (n, count, top)
 		while not p:isempty() do 
 			local v = p:pop()	
 			count[v] = count[v] - 1
-			if count[v] == 0 then 
-				qlink[r] = v	-- the value of `r` is the one left in the outer loop.
-				r = v
-			end
+			if count[v] == 0 then append_root(v) end
 		end
 		f = qlink[f] 
 	end
