@@ -1,7 +1,7 @@
 
 local toposort = require 'toposort'
 
-local order, o = toposort.sort({ 
+local isacyclic, order = toposort.sort({ 
 	[1] = {3}, 
 	[3] = {7}, 
 	[7] = {5, 4}, 
@@ -12,10 +12,10 @@ local order, o = toposort.sort({
 	[9] = {2, 5}, 
 })
 
+assert (isacyclic)
 assert (table.concat(order, ', ') == '1, 9, 3, 2, 7, 4, 5, 8, 6')
-assert (table.concat(o, ', ') == '1, 9, 3, 2, 7, 4, 5, 8, 6')
 
-local flag, cycle = toposort.sort({ 
+local isacyclic, cycle = toposort.sort({ 
 	[1] = {3}, 
 	[3] = {7}, 
 	[7] = {5, 4}, 
@@ -26,6 +26,5 @@ local flag, cycle = toposort.sort({
 	[9] = {2, 5}, 
 })
 
-assert (not flag)
-
-print(table.concat(cycle, ', '))
+assert (not isacyclic)
+assert (table.concat(cycle, ', ') == '1, 4, 7, 3, 1')

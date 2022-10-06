@@ -30,7 +30,7 @@ local function T (n, count, top)
 		
 		n = n - 1
 		local p = top[f]
-		top[f] = nil	-- free such `f`'s stack.
+
 		while not p:isempty() do 
 			local v = p:pop()	
 			count[v] = count[v] - 1
@@ -42,14 +42,13 @@ local function T (n, count, top)
 	if n > 0 then	-- a loop is detected
 
 		qlink = {}
-		--for k, _ in pairs(count) do qlink[k] = first end
 
 		for k, _ in pairs(count) do 
 
 			local p = top[k]
-			top[k] = 0
+			top[k] = false
 
-			while p and not p:isempty() do 
+			while not p:isempty() do 
 				local v = p:pop()
 				qlink[v] = k
 			end
@@ -58,31 +57,23 @@ local function T (n, count, top)
 		local w, _ = next(qlink)
 
 		repeat
-			top[w] = 1
+			top[w] = true
 			w = qlink[w]
-		until top[w] ~= 0
+		until top[w]
 
 		local cycle = {}
 		repeat
 			table.insert(cycle, w)
-			top[w] = 0
+			top[w] = false
 			w = qlink[w]
-		until top[w] ~= 1
+		until not top[w]
 
 		table.insert(cycle, w)
 		
 		return false, cycle
 
-	else assert (n == 0) end
-
-	local o = {}
-	f = qlink[first]
-	while f do
-		table.insert(o, f)
-		f = qlink[f]
-	end
-
-	return order, o
+	elseif n == 0 then return true, order 
+	else error 'Logical error: too many deletion' end
 
 end
 
